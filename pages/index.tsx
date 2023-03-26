@@ -1,9 +1,21 @@
+import { useRef } from 'react';
 import { Tab } from '@headlessui/react';
 import classNames from 'classnames';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import Masonry from 'react-masonry-css';
+
+import type { LightGallery } from 'lightgallery/lightgallery';
+import LightGalleryComponent from 'lightgallery/react'
+
+import 'lightgallery/css/lightgallery.css'
+import 'lightgallery/css/lg-zoom.css'
+import 'lightgallery/css/lg-thumbnail.css'
+
+// plugins
+import lgThumbnail from 'lightgallery/plugins/thumbnail'
+import lgZoom from 'lightgallery/plugins/zoom'
 
 import bgModern from '../public/bgModern.jpg'
 import ocean1 from '../public/ocean-1.jpg'
@@ -36,6 +48,8 @@ const images = [
 ]
 
 export default function Home() {
+
+  const lightBoxRef = useRef<LightGallery | null>(null)
   return (
     <div className="h-full overflow-auto">
       <Head>
@@ -45,19 +59,18 @@ export default function Home() {
         <link rel='icon' href='/favicon.ico' />
       </Head>
 
-
       <Image src={bgModern} alt='background-img' className='fixed top-0 left-0 z-0' placeholder='blur'/>
-
       <div className='fixed top-0 left-0 w-full h-full from-zinc-900 bg-gradient-to-t z-10'></div>
 
       <header className='fixed top-0 w-full z-30 flex justify-between items-center h-[90px] px-20 from-zinc-900 bg-gradient-to-b'>
         <span className='uppercase text-lg font-medium'>Nature Canvas</span>
-        <Link href='#' className='rounded-3xl bg-white text-stone-700 hover:underline decoration-gray-400 px-6 py-2 hover:bg-opacity-90 '>
+        <Link href='#' className='rounded-3xl bg-white text-stone-700 px-6 py-2 hover:underline decoration-gray-400  hover:bg-opacity-90 '>
             Contact
         </Link>
       </header>
       <main className='relative pt-[120px] z-20'>
         <div className="flex flex-col items-center h-full">
+
       <Tab.Group>
       <Tab.List className='flex items-center gap-16'>
         {tabs.map(tab => (
@@ -69,15 +82,27 @@ export default function Home() {
       <Tab.Panels className='h-full max-w-[900px] w-full p-2 sm:p-4 text-slate-700 mt-4'>
         <Tab.Panel>
           <Masonry breakpointCols={2} className='flex gap-4' columnClassName=''>
-            {images.map(image => (
-            <Image key={image.src} src={image} alt='image' className='my-4 rounded-xl' placeholder='blur'/>
+            {images.map((image, i) => (
+            <Image key={image.src} src={image} alt='image' className='my-4 rounded-lg hover:opacity-80 cursor-pointer' placeholder='blur' onClick={() =>{
+              lightBoxRef.current?.openGallery(i)
+            }
+            }/>
               ))}
           </Masonry>
+          <LightGalleryComponent onInit={ref => {
+           if(ref) {
+            lightBoxRef.current = ref.instance
+           }
+          }} speed={500} plugins={[lgThumbnail, lgZoom]} dynamic dynamicEl={images.map(image => ({
+            src: image.src,
+            thumb: image.src,
+          }))}/>
         </Tab.Panel>
         <Tab.Panel>Oceans</Tab.Panel>
         <Tab.Panel>Forests</Tab.Panel>
       </Tab.Panels>
     </Tab.Group>
+
         </div>
       </main>
       <footer className='relative h-[60px] flex justify-center items-center py-2 sm:py-12 uppercase font-medium z-20'>
