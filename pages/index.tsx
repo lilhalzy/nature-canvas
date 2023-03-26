@@ -1,8 +1,15 @@
 import { Tab } from '@headlessui/react';
+import classNames from 'classnames';
 import Head from 'next/head';
+import Image from 'next/image';
 import Link from 'next/link';
 import Masonry from 'react-masonry-css';
-import classNames from 'classnames';
+
+import ocean1 from '../public/ocean-1.jpg'
+import ocean2 from '../public/ocean-2.jpg'
+import ocean3 from '../public/ocean-3.jpg'
+import ocean4 from '../public/ocean-4.jpg'
+import ocean5 from '../public/ocean-5.jpg'
 
 const tabs = [
   {
@@ -30,7 +37,7 @@ export default function Home() {
       </Head>
       <header className='fixed top-0 w-full z-10 flex justify-between items-center h-[90px] px-20'>
         <span className='uppercase text-lg font-medium'>Nature Canvas</span>
-        <Link href='#' className='rounded-3xl bg-white text-stone-700 px-6 py-2 hover:bg-opacity-90'>
+        <Link href='#' className='rounded-3xl bg-white text-stone-700 hover:underline decoration-gray-400 px-6 py-2 hover:bg-opacity-90 '>
             Contact
         </Link>
       </header>
@@ -47,11 +54,11 @@ export default function Home() {
       <Tab.Panels className='h-full max-w-[900px] w-full p-2 sm:p-4 text-slate-700 mt-4'>
         <Tab.Panel>
           <Masonry breakpointCols={2} className='flex gap-4' columnClassName=''>
-            <img src='/ocean-3.jpg' alt='ocean-3' className='my-4 rounded-xl'/>
-            <img src='/ocean-2.jpg' alt='ocean-2' className='my-4 rounded-xl'/>
-            <img src='/ocean-1.jpg' alt='ocean-1' className='my-4 rounded-xl' />
-            <img src='/ocean-4.jpg' alt='ocean-4' className='my-4 rounded-xl'/>
-            <img src='/ocean-5.jpg' alt='ocean-5' className='my-4 rounded-xl'/>
+            <Image src={ocean3} alt={'placeholder'} className='my-4 rounded-xl'/>
+            <Image src={ocean2} alt={'placeholder'} className='my-4 rounded-xl'/>
+            <Image src={ocean1} alt={'placeholder'} className='my-4 rounded-xl'/>
+            <Image src={ocean4} alt={'placeholder'} className='my-4 rounded-xl'/>
+            <Image src={ocean5} alt={'placeholder'} className='my-4 rounded-xl'/>
           </Masonry>
         </Tab.Panel>
         <Tab.Panel>Oceans</Tab.Panel>
