@@ -10,7 +10,7 @@ const alata = Alata({
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <div className={`${alata.variable} font-sans`}>
+    <div className={`${alata.variable} font-sans h-full`}>
       <Component {...pageProps} />
     </div>
   );
