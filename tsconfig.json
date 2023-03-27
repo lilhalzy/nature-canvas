@@ -21,7 +21,7 @@
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "image-test.js"],
   "exclude": ["node_modules"],
   "ts-node": {
-    "transpileOnly": true,
+    "transpileOnly": false,
     "compilerOptions": {
       "module": "CommonJS"
     }

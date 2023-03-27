@@ -6,6 +6,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import Masonry from 'react-masonry-css';
+import lqip from 'lqip-modern';
 
 import { createApi } from 'unsplash-js';
 import nodeFetch from 'node-fetch';
@@ -29,6 +30,7 @@ type Photo = {
   width: number,
   height: number,
   alt: string,
+  blurDataURL: string,
 }
 
 const tabs = [
@@ -57,48 +59,14 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
     accessKey: process.env.UNSPLASH_ACCESS_KEY!,
     fetch: nodeFetch as unknown as typeof fetch,
   })  
-  const oceans = await unsplash.search.getPhotos({
-    query: 'oceans',
-  })
 
-  const forests = await unsplash.search.getPhotos({
-    query: 'forests',
-  })
-
-  const mapOceans: Photo[] = []
-
-  if(oceans.type === 'success') {
-    const oceanArr = oceans.response.results.map((ocean, i) => ({
-        src: ocean.urls.full,
-        thumb: ocean.urls.thumb,
-        width: ocean.width,
-        height: ocean.height,
-        alt: ocean.alt_description ?? `ocean-img-${i}`,
-      }))
-      mapOceans.push(...oceanArr)
-  } else {
-    console.error('ERROR: Could not get ocean photo');
-  }
-
-  const mapForest: Photo[] = []
-
-  if(forests.type === 'success') {
-    const forestArr = forests.response.results.map((forest, i) => ({
-        src: forest.urls.full,
-        thumb: forest.urls.thumb,
-        width: forest.width,
-        height: forest.height,
-        alt: forest.alt_description ?? `forest-img-${i}`,
-      }))
-      mapForest.push(...forestArr)
-  } else {
-    console.error('ERROR: Could not get forest photo');
-  }
-
+  const oceans = await getImages(unsplash, 'oceans')
+  const forests = await getImages(unsplash, 'forests')
+  
   return ({
     props: {
-      oceans: mapOceans,
-      forests: mapForest,
+      oceans,
+      forests,
   }
 })
 }
@@ -160,13 +128,12 @@ type GalleryProps = {
 }
 
 function Gallery({photos}:GalleryProps) {
-
   const lightBoxRef = useRef<LightGallery | null>(null)
   return (
     <>
       <Masonry breakpointCols={2} className='flex gap-4' columnClassName=''>
        {photos.map((photo, i) => (
-         <Image key={photo.src} src={photo.src} width={photo.width} height={photo.height} alt={photo.alt} className='my-4 rounded-lg hover:opacity-80 cursor-pointer' blurDataURL={"data:image/webp;base64,UklGRkQAAABXRUJQVlA4IDgAAACwAQCdASoMABAABUB8JbACdABPETEAAP7RkuUo9LhYapfHh8xO0wO5bEY3NoTR5RN0A5XacUeGAA=="} onClick={() =>{
+         <Image key={photo.src} src={photo.src} width={photo.width} height={photo.height} alt={photo.alt} className='my-4 rounded-lg hover:opacity-80 cursor-pointer' placeholder='blur' blurDataURL={photo.blurDataURL} onClick={() =>{
            lightBoxRef.current?.openGallery(i)
          }
         }/>
@@ -182,4 +149,43 @@ function Gallery({photos}:GalleryProps) {
      }))}/> 
     </>
   )
+}
+
+async function getImages(cli: ReturnType<typeof createApi>, query:string): Promise<Photo[]> {
+  const mapPhotos: Photo[] = []
+  
+  const photos = await cli.search.getPhotos({
+    query,
+  })
+
+  if(photos.type === 'success') {
+    const photoArr = photos.response.results.map((photo, i) => ({
+        src: photo.urls.full,
+        thumb: photo.urls.thumb,
+        width: photo.width,
+        height: photo.height,
+        alt: photo.alt_description ?? `img-${i}`,
+      }))
+
+      const photosArrWithDataURL: Photo[] = []
+
+      for(const photo of photoArr) {
+        const blurDataURL = await getDataUrl(photo.src)
+        photosArrWithDataURL.push({...photo, blurDataURL})
+      }
+      mapPhotos.push(...photosArrWithDataURL)
+    } else {
+      console.error('ERROR: Could not get photo');
+    }
+    
+    return mapPhotos
+  }
+  
+  async function getDataUrl(url: string) {
+    const imgData = await fetch(url)
+
+    const arrayBufferData = await imgData.arrayBuffer()
+    const lqipData = await lqip(Buffer.from(arrayBufferData))
+    
+    return lqipData.metadata.dataURIBase64
 }
