@@ -1,15 +1,15 @@
-import { useRef } from 'react';
 import { Tab } from '@headlessui/react';
-import { GetStaticProps } from 'next';
 import classNames from 'classnames';
+import lqip from 'lqip-modern';
+import { GetStaticProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRef } from 'react';
 import Masonry from 'react-masonry-css';
-import lqip from 'lqip-modern';
 
-import { createApi } from 'unsplash-js';
 import nodeFetch from 'node-fetch';
+import { createApi } from 'unsplash-js';
 
 import type { LightGallery } from 'lightgallery/lightgallery';
 import LightGalleryComponent from 'lightgallery/react';
@@ -133,11 +133,14 @@ function Gallery({photos}:GalleryProps) {
     <>
       <Masonry breakpointCols={2} className='flex gap-4' columnClassName=''>
        {photos.map((photo, i) => (
-         <Image key={photo.src} src={photo.src} width={photo.width} height={photo.height} alt={photo.alt} className='my-4 rounded-lg hover:opacity-80 cursor-pointer' placeholder='blur' blurDataURL={photo.blurDataURL} onClick={() =>{
-           lightBoxRef.current?.openGallery(i)
-         }
-        }/>
-       ))}
+        <div className='relative'>
+         <Image key={photo.src} src={photo.src} width={photo.width} height={photo.height} alt={photo.alt} className='my-4 rounded-lg' placeholder='blur' blurDataURL={photo.blurDataURL} 
+        />
+        <div className='absolute w-full h-full inset-0 bg-transparent hover:bg-stone-900 hover:opacity-10 cursor-pointer' onClick={() => {
+          lightBoxRef.current?.openGallery(i)
+        }}></div>
+        </div>
+          ))}
      </Masonry>
      <LightGalleryComponent onInit={ref => {
        if(ref) {
