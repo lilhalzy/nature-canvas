@@ -60,8 +60,10 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
     fetch: nodeFetch as unknown as typeof fetch,
   })  
 
-  const oceans = await getImages(unsplash, 'oceans')
-  const forests = await getImages(unsplash, 'forests')
+  const [oceans, forests] = await Promise.all([
+    getImages(unsplash, 'oceans'),
+    getImages(unsplash, 'forests'),
+  ])
   
   return ({
     props: {
