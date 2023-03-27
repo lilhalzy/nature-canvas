@@ -53,8 +53,6 @@ type HomeProps = {
 
 export const getStaticProps: GetStaticProps<HomeProps> = async () => {
 
-  console.log(process.env.UNSPLASH_ACCESS_KEY);
-
   const unsplash = createApi({
     accessKey: process.env.UNSPLASH_ACCESS_KEY!,
     fetch: nodeFetch as unknown as typeof fetch,
@@ -64,7 +62,7 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
   })
 
   const forests = await unsplash.search.getPhotos({
-    query: 'forests'
+    query: 'forests',
   })
 
   const mapOceans: Photo[] = []
@@ -168,7 +166,7 @@ function Gallery({photos}:GalleryProps) {
     <>
       <Masonry breakpointCols={2} className='flex gap-4' columnClassName=''>
        {photos.map((photo, i) => (
-         <Image key={photo.src} src={photo.src} width={photo.width} height={photo.height} alt={photo.alt} className='my-4 rounded-lg hover:opacity-80 cursor-pointer' onClick={() =>{
+         <Image key={photo.src} src={photo.src} width={photo.width} height={photo.height} alt={photo.alt} className='my-4 rounded-lg hover:opacity-80 cursor-pointer' blurDataURL={"data:image/webp;base64,UklGRkQAAABXRUJQVlA4IDgAAACwAQCdASoMABAABUB8JbACdABPETEAAP7RkuUo9LhYapfHh8xO0wO5bEY3NoTR5RN0A5XacUeGAA=="} onClick={() =>{
            lightBoxRef.current?.openGallery(i)
          }
         }/>
