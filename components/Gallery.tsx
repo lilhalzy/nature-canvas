@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-key */
 import type { Photo } from "@/types"
 import LightGalleryComponent from 'lightgallery/react';
 import { LightGallery } from "lightgallery/lightgallery"
