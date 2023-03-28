@@ -1,37 +1,17 @@
 import { Tab } from '@headlessui/react';
 import classNames from 'classnames';
-import lqip from 'lqip-modern';
 import { GetStaticProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRef } from 'react';
-import Masonry from 'react-masonry-css';
 
 import nodeFetch from 'node-fetch';
 import { createApi } from 'unsplash-js';
 
-import type { LightGallery } from 'lightgallery/lightgallery';
-import LightGalleryComponent from 'lightgallery/react';
-
-import 'lightgallery/css/lg-thumbnail.css';
-import 'lightgallery/css/lg-zoom.css';
-import 'lightgallery/css/lightgallery.css';
-
-// plugins
-import lgThumbnail from 'lightgallery/plugins/thumbnail';
-import lgZoom from 'lightgallery/plugins/zoom';
-
 import bgModern from '../public/bgModern.jpg';
-
-type Photo = {
-  src: string,
-  thumb: string,
-  width: number,
-  height: number,
-  alt: string,
-  blurDataURL: string,
-}
+import type { Photo } from '@/types';
+import { Gallery } from '@/components/Gallery';
+import { getImages } from '@/utils/image.util';
 
 const tabs = [
   {
@@ -123,74 +103,4 @@ export default function Home({oceans, forests}: HomeProps) {
       </footer>
     </div>
   );
-}
-
-type GalleryProps = {
-  photos: Photo[],
-}
-
-function Gallery({photos}:GalleryProps) {
-  const lightBoxRef = useRef<LightGallery | null>(null)
-  return (
-    <>
-      <Masonry breakpointCols={2} className='flex gap-4' columnClassName=''>
-       {photos.map((photo, i) => (
-        <div className='relative'>
-         <Image key={photo.src} src={photo.src} width={photo.width} height={photo.height} alt={photo.alt} className='my-4 rounded-lg' placeholder='blur' blurDataURL={photo.blurDataURL} 
-        />
-        <div className='absolute w-full h-full inset-0 bg-transparent hover:bg-stone-900 hover:opacity-10 cursor-pointer' onClick={() => {
-          lightBoxRef.current?.openGallery(i)
-        }}></div>
-        </div>
-          ))}
-     </Masonry>
-     <LightGalleryComponent onInit={ref => {
-       if(ref) {
-         lightBoxRef.current = ref.instance
-       }
-     }} speed={500} plugins={[lgThumbnail, lgZoom]} dynamic dynamicEl={photos.map(photo => ({
-       src: photo.src,
-       thumb: photo.src,
-     }))}/> 
-    </>
-  )
-}
-
-async function getImages(cli: ReturnType<typeof createApi>, query:string): Promise<Photo[]> {
-  const mapPhotos: Photo[] = []
-  
-  const photos = await cli.search.getPhotos({
-    query,
-  })
-
-  if(photos.type === 'success') {
-    const photoArr = photos.response.results.map((photo, i) => ({
-        src: photo.urls.full,
-        thumb: photo.urls.thumb,
-        width: photo.width,
-        height: photo.height,
-        alt: photo.alt_description ?? `img-${i}`,
-      }))
-
-      const photosArrWithDataURL: Photo[] = []
-
-      for(const photo of photoArr) {
-        const blurDataURL = await getDataUrl(photo.src)
-        photosArrWithDataURL.push({...photo, blurDataURL})
-      }
-      mapPhotos.push(...photosArrWithDataURL)
-    } else {
-      console.error('ERROR: Could not get photo');
-    }
-    
-    return mapPhotos
-  }
-  
-  async function getDataUrl(url: string) {
-    const imgData = await fetch(url)
-
-    const arrayBufferData = await imgData.arrayBuffer()
-    const lqipData = await lqip(Buffer.from(arrayBufferData))
-    
-    return lqipData.metadata.dataURIBase64
 }
