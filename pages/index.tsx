@@ -35,8 +35,6 @@ type HomeProps = {
 
 export const getStaticProps: GetStaticProps<HomeProps> = async () => {
 
-  console.log(process.env.UNSPLASH_ACCESS_KEY);
-
   const unsplash = createApi({
     accessKey:process.env.UNSPLASH_ACCESS_KEY!,
     fetch: nodeFetch as unknown as typeof fetch,
