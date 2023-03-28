@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-key */
 import type { Photo } from "@/types"
 import LightGalleryComponent from 'lightgallery/react';
 import { LightGallery } from "lightgallery/lightgallery"
@@ -24,7 +23,7 @@ export function Gallery({photos}:GalleryProps) {
       <>
         <Masonry breakpointCols={2} className='flex gap-4' columnClassName=''>
          {photos.map((photo, i) => (
-          <div className='relative'>
+          <div key={i}className='relative'>
            <Image key={photo.src} src={photo.src} width={photo.width} height={photo.height} alt={photo.alt} className='my-4 rounded-lg' placeholder='blur' blurDataURL={photo.blurDataURL} 
           />
           <div className='absolute w-full h-full inset-0 bg-transparent hover:bg-stone-900 hover:opacity-10 cursor-pointer' onClick={() => {
