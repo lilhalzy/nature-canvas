@@ -12,12 +12,12 @@ const Contact: React.FC<ContactProps> = ({ isOpen, onClose, children }) => {
 
   const handleCopyClick = async () => {
     if (MY_EMAIL) {
-        try {
-            await navigator.clipboard.writeText(MY_EMAIL)
-            setIsCopied(true)
-        } catch (err) {
-            console.error
-        }
+      try {
+        await navigator.clipboard.writeText(MY_EMAIL);
+        setIsCopied(true);
+      } catch (err) {
+        console.error;
+      }
     }
   };
   // Disable scrolling when the modal is open
