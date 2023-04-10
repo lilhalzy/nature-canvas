@@ -1,0 +1,1 @@
+export const MY_EMAIL = process.env.NEXT_PUBLIC_MY_EMAIL

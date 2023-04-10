@@ -3,16 +3,16 @@ import classNames from 'classnames';
 import { GetStaticProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
-import Link from 'next/link';
 
 import nodeFetch from 'node-fetch';
 import { createApi } from 'unsplash-js';
 
-import bgModern from '../public/bgModern.jpg';
-import type { Photo } from '@/types';
 import { Gallery } from '@/components/Gallery';
+import type { Photo } from '@/types';
 import { getImages } from '@/utils/image.util';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import Contact from '../components/Contact';
+import bgModern from '../public/bgModern.jpg';
 
 const tabs = [
   {
@@ -39,7 +39,7 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
   const unsplash = createApi({
     accessKey:process.env.UNSPLASH_ACCESS_KEY!,
     fetch: nodeFetch as unknown as typeof fetch,
-  })  
+  })
 
   const [oceans, forests] = await Promise.all([
     getImages(unsplash, 'oceans'),
@@ -60,8 +60,13 @@ export default function Home({oceans, forests}: HomeProps) {
     const all = [...oceans, ...forests]
     return all.sort((a,b) => b.likes-a.likes)
   }, [oceans, forests])
-  console.log(allPhotos);
-  
+  const [isContactOpen, setIsContactOpen] = useState(false)
+  const handleOpenContact = () => {
+    setIsContactOpen(true)
+  }
+  const handleCloseContact = () => {
+    setIsContactOpen(false)
+  }
   return (
     <div className="h-full overflow-auto">
       <Head>
@@ -70,15 +75,16 @@ export default function Home({oceans, forests}: HomeProps) {
         <meta name='viewport' content='width=device-width, initial-scale=1' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-
+      (Contact)
       <Image src={bgModern} alt='background-img' className='fixed top-0 left-0 z-0' placeholder='blur'/>
       <div className='fixed top-0 left-0 w-full h-full from-zinc-900 bg-gradient-to-t z-10'></div>
 
       <header className='fixed top-0 w-full z-30 flex justify-between items-center h-[90px] px-20 from-zinc-900 bg-gradient-to-b'>
         <span className='uppercase text-lg font-medium'>Nature Canvas</span>
-        <Link href='#' className='rounded-3xl bg-white text-stone-700 px-6 py-2 hover:underline decoration-gray-400  hover:bg-opacity-90 '>
-            Contact
-        </Link>
+         <button className='rounded-3xl bg-white text-stone-700 px-6 py-2 hover:underline decoration-gray-400  hover:bg-opacity-90' onClick={handleOpenContact}>Contact</button>
+      <Contact isOpen={isContactOpen} onClose={handleCloseContact}>
+        <h2>Email me:</h2>
+      </Contact>
       </header>
       <main className='relative pt-[120px] z-20'>
         <div className="flex flex-col items-center h-full">
