@@ -94,7 +94,6 @@ export default function Home({ oceans, forests }: HomeProps) {
           Contact
         </button>
         <Contact isOpen={isContactOpen} onClose={handleCloseContact}>
-          <h2>Email me:</h2>
         </Contact>
       </header>
       <main className='relative pt-[120px] z-20'>
@@ -130,8 +129,8 @@ export default function Home({ oceans, forests }: HomeProps) {
           </Tab.Group>
         </div>
       </main>
-      <footer className='relative h-[60px] flex justify-center items-center py-2 sm:py-12 uppercase font-medium z-20'>
-        <p>Nature Canvas</p>
+      <footer className='relative h-[60px] flex justify-center items-center py-2 sm:py-12 uppercase font-medium z-20 select-none'>
+        <p className='opacity-30 hover:opacity-60 cursor-text'>lilhalzy | {new Date().getFullYear()}</p>
       </footer>
     </div>
   );
